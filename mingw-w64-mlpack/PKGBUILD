@@ -1,0 +1,36 @@
+# Maintainer: Aaron Chen <nextAaron@gmail.com>
+
+_realname=mlpack
+
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=1.0.8
+pkgrel=1
+pkgdesc="A safe, concurrent, practical language from Mozilla (mingw-w64)"
+arch=('any')
+url="http://www.mlpack.org/"
+license=('LGPL')
+depends=("${MINGW_PACKAGE_PREFIX}-lapack")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc" "${MINGW_PACKAGE_PREFIX}-cmake")
+options=('!makeflags' 'staticlibs')
+source=("http://www.mlpack.org/files/$_realname-$pkgver.tar.gz" "mlpack_mingw.patch")
+md5sums=('0331e12f2485b9d5d39c9d9dea618108'
+         '27dfca5ae0d9f3c69cfcc56ea75e0e85')
+
+prepare() {
+  cd ${srcdir}/${_realname}-$pkgver
+  patch -p1 -i ${srcdir}/mlpack_mingw.patch
+}
+
+build() {
+	mkdir build-$_realname-$pkgver
+	cd build-$_realname-$pkgver
+	cmake -G "MSYS Makefiles" -DCMAKE_CXX_COMPILER=g++ ../$_realname-$pkgver
+	make
+}
+
+package() {
+	cd build-$_realname-$pkgver
+	make DESTDIR=${pkgdir} install
+	mkdir -p ${pkgdir}/usr/bin
+	mv ${pkgdir}/usr ${pkgdir}/${MINGW_PREFIX}
+}

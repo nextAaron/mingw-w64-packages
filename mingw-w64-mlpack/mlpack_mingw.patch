@@ -1,0 +1,54 @@
+diff -ur ../mlpack-1.0.8/CMakeLists.txt mlpack-1.0.8/CMakeLists.txt
+--- ../mlpack-1.0.8/CMakeLists.txt	2014-01-06 20:16:30.000000000 -0800
++++ mlpack-1.0.8/CMakeLists.txt	2014-06-29 04:11:04.063761900 -0700
+@@ -1,6 +1,14 @@
+ cmake_minimum_required(VERSION 2.8.5)
+ project(mlpack C CXX)
+ 
++if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
++  message(STATUS "*** CMAKE_INSTALL_PREFIX was initalised by cmake to the default value of ${CMAKE_INSTALL_PREFIX}")
++  message(STATUS "*** CMAKE_INSTALL_PREFIX changed to /usr")
++  unset(CMAKE_INSTALL_PREFIX)
++  set(CMAKE_INSTALL_PREFIX "/usr")
++  #set(CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "install prefix" FORCE)
++endif()
++
+ # First, define all the compilation options.
+ # We default to debugging mode for developers.
+ option(DEBUG "Compile with debugging information" OFF)
+@@ -164,7 +172,7 @@
+ # updated as time goes on and new versions are released.
+ set(Boost_ADDITIONAL_VERSIONS
+   "1.41" "1.41.0" "1.42" "1.42.0" "1.43" "1.43.0" "1.44" "1.44.0" "1.45.0"
+-  "1.46.0" "1.46.1" "1.47.0" "1.48.0" "1.49.0")
++  "1.46.0" "1.46.1" "1.47.0" "1.48.0" "1.49.0" "1.55.0")
+ find_package(Boost
+     COMPONENTS
+       program_options
+@@ -198,10 +206,10 @@
+ # On Windows, automatic linking is performed, so we don't need to worry about
+ # it.  Clear the list of libraries to link against and let Visual Studio handle
+ # it.
+-if (WIN32)
+-  link_directories(${Boost_LIBRARY_DIRS})
+-  set(Boost_LIBRARIES "")
+-endif (WIN32)
++#if (WIN32)
++#  link_directories(${Boost_LIBRARY_DIRS})
++#  set(Boost_LIBRARIES "")
++#endif (WIN32)
+ 
+ # For Boost testing framework (will have no effect on non-testing executables).
+ # This specifies to Boost that we are dynamically linking to the Boost test
+diff -ur ../mlpack-1.0.8/src/mlpack/core/util/nulloutstream.hpp mlpack-1.0.8/src/mlpack/core/util/nulloutstream.hpp
+--- ../mlpack-1.0.8/src/mlpack/core/util/nulloutstream.hpp	2014-01-06 20:34:08.000000000 -0800
++++ mlpack-1.0.8/src/mlpack/core/util/nulloutstream.hpp	2014-06-29 03:41:28.099297700 -0700
+@@ -68,6 +68,8 @@
+   NullOutStream& operator<<(long val) { (void) val; return *this; }
+   //! Does nothing.
+   NullOutStream& operator<<(unsigned long val) { (void) val; return *this; }
++	//! Does nothing.
++	NullOutStream& operator<<(unsigned long long val) { (void) val; return *this; }
+   //! Does nothing.
+   NullOutStream& operator<<(float val) { (void) val; return *this; }
+   //! Does nothing.
