@@ -1,0 +1,30 @@
+# Maintainer: Aaron Chen <nextAaron@gmail.com>
+
+_realname=armadillo
+
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=4.300.9
+pkgrel=1
+pkgdesc="C++ linear algebra library (mingw-w64)"
+arch=('any')
+url="http://arma.sourceforge.net/"
+license=('MPL')
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc" "${MINGW_PACKAGE_PREFIX}-cmake")
+#	"${MINGW_PACKGAGE_PREFIX}-cmake")
+options=('!makeflags' 'staticlibs')
+source=(http://download.sourceforge.net/project/arma/$_realname-$pkgver.tar.gz)
+md5sums=('d51d1beb2a335f3002702d112c4814f3')
+
+build() {
+	cd $_realname-$pkgver
+	cmake -G "MSYS Makefiles" -DCMAKE_CXX_COMPILER=g++
+	make
+}
+
+package() {
+	cd $_realname-$pkgver
+	make DESTDIR=${pkgdir} install
+	mkdir -p ${pkgdir}/usr/bin
+	mv ${pkgdir}/usr/lib/*.dll ${pkgdir}/usr/bin
+	mv ${pkgdir}/usr ${pkgdir}/${MINGW_PREFIX}
+}
